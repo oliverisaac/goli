@@ -3,12 +3,18 @@ package goli
 import (
 	"bytes"
 	"compress/gzip"
-	"encoding/base64"
 	"io"
 )
 
-// gzipAndBase64Encode compresses the input string using gzip and then encodes it using Base64 URL encoding.
-func GzipAndBase64Encode(input string) (string, error) {
+type Encoder interface {
+	EncodeToString([]byte) string
+}
+
+type Decoder interface {
+	DecodeString(string) ([]byte, error)
+}
+
+func GzipAndEncode(input string, encoder Encoder) (string, error) {
 	// Create a buffer to hold the gzipped data.
 	var gzipBuffer bytes.Buffer
 	gzipWriter := gzip.NewWriter(&gzipBuffer)
@@ -25,15 +31,15 @@ func GzipAndBase64Encode(input string) (string, error) {
 	}
 
 	// Base64 URL encode the gzipped data.
-	encoded := base64.URLEncoding.EncodeToString(gzipBuffer.Bytes())
+	encoded := encoder.EncodeToString(gzipBuffer.Bytes())
 
 	return encoded, nil
 }
 
 // base64DecodeAndGunzip decodes the input string from Base64 URL encoding and then decompresses it using gzip.
-func Base64DecodeAndGunzip(encoded string) (string, error) {
+func DecodeAndGunzip(encoded string, decoder Decoder) (string, error) {
 	// Decode the Base64 URL encoded string.
-	gzippedData, err := base64.URLEncoding.DecodeString(encoded)
+	gzippedData, err := decoder.DecodeString(encoded)
 	if err != nil {
 		return "", err
 	}

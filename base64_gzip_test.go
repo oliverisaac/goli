@@ -1,13 +1,14 @@
 package goli_test
 
 import (
+	"encoding/base64"
 	"testing"
 
 	"github.com/oliverisaac/goli"
 	"golang.org/x/exp/rand"
 )
 
-var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:/',.!@#$%^&*()-=_=[]{}[]|?")
 
 func RandStringRunes(n int) string {
 	b := make([]rune, n)
@@ -20,12 +21,12 @@ func RandStringRunes(n int) string {
 func TestGzipAndBase64Encode(t *testing.T) {
 	t.Run("test unzip and rezip", func(t *testing.T) {
 		input := RandStringRunes(100)
-		compressed, err := goli.GzipAndBase64Encode(input)
+		compressed, err := goli.GzipAndEncode(input, base64.StdEncoding)
 		if err != nil {
 			t.Errorf("GzipAndBase64Encode() error = %v", err)
 			return
 		}
-		decompressed, err := goli.Base64DecodeAndGunzip(compressed)
+		decompressed, err := goli.DecodeAndGunzip(compressed, base64.StdEncoding)
 		if err != nil {
 			t.Errorf("GzipAndBase64Encode() error = %v", err)
 			return
