@@ -1,6 +1,9 @@
 package goli
 
-import "github.com/sirupsen/logrus"
+import (
+	"github.com/sirupsen/logrus"
+	_ "github.com/sirupsen/logrus"
+)
 
 // InitLogrus initializes logrus using env vars
 func InitLogrus(defaultLevel logrus.Level) {
